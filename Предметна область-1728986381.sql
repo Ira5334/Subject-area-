@@ -35,5 +35,38 @@ CREATE TABLE IF NOT EXISTS `Payment` (
     `payment_id` INT AUTO_INCREMENT NOT NULL,
     `payment_date` DATE NOT NULL,
     `amount` DECIMAL(10, 2) NOT NULL,
+    `reservation_id` INT NOT NULL,
+    `payment_method` VARCHAR(50) NOT NULL,
+    `customer_ID` INT NOT NULL,
     PRIMARY KEY (`payment_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `Employee` (
+    `employee_id` INT AUTO_INCREMENT NOT NULL,
+    `name` VARCHAR(100) NOT NULL,
+    `position` VARCHAR(50) NOT NULL,
+    `work_schedule` VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`employee_id`)
+);
+
+CREATE TABLE IF NOT EXISTS `Order` (
+    `order_id` INT AUTO_INCREMENT NOT NULL,
+    `reservation_id` INT NOT NULL,
+    `service_id` INT NOT NULL,
+    `quantity` INT NOT NULL,
+    `comments` TEXT,
+    PRIMARY KEY (`order_id`)
+);
+
+-- Зв'язки між таблицями
+ALTER TABLE `Payment` 
+ADD CONSTRAINT `fk_payment_customer` FOREIGN KEY (`customer_ID`) REFERENCES `Customer`(`customer_id`),
+ADD CONSTRAINT `fk_payment_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `Reservation`(`reservation_id`);
+
+ALTER TABLE `Reservation` 
+ADD CONSTRAINT `fk_reservation_room` FOREIGN KEY (`room_id`) REFERENCES `Room`(`room_id`),
+ADD CONSTRAINT `fk_reservation_employee` FOREIGN KEY (`employee_id`) REFERENCES `Employee`(`employee_id`);
+
+ALTER TABLE `Order` 
+ADD CONSTRAINT `fk_order_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `Reservation`(`reservation_id`),
+ADD CONSTRAINT `fk_order_service` FOREIGN KEY (`service_id`) REFERENCES `Service`(`service_id`);
